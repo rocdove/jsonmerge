@@ -132,6 +132,27 @@ class TestMerge(unittest.TestCase):
 
         self.assertEqual(base, ["a", "b"])
 
+    def test_appendXor(self):
+        schema = {'mergeStrategy': 'appendXor'}
+
+        base = None
+        base = jsonmerge.merge(base, ["b","a","d"], schema)
+        base = jsonmerge.merge(base, ["a","c","z"], schema)
+        base = jsonmerge.merge(base, ["a","c","d"], schema)
+
+        self.assertEqual(base, ["a", "b", "z"])
+
+
+    def test_appendDistinct(self):
+        schema = {'mergeStrategy': 'appendDistinct'}
+
+        base = None
+        base = jsonmerge.merge(base, ["b"], schema)
+        base = jsonmerge.merge(base, ["a"], schema)
+        base = jsonmerge.merge(base, ["b"], schema)
+
+        self.assertEqual(base, ["a", "b"])
+
     def test_append_type_error(self):
 
         schema = {'mergeStrategy': 'append'}

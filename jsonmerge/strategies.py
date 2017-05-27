@@ -120,6 +120,53 @@ class Append(Strategy):
 
         return schema
 
+class AppendXor(Strategy):
+    def merge(self, walk, base, head, schema, meta, **kwargs):
+        if not walk.is_type(head, "array"):
+            raise HeadInstanceError("Head for an 'append' merge strategy is not an array")
+
+        if base.is_undef():
+            base = JSONValue([], base.ref)
+        else:
+            if not walk.is_type(base, "array"):
+                raise BaseInstanceError("Base for an 'append' merge strategy is not an array")
+
+            base = JSONValue(list(base.val), base.ref)
+
+        base.val = list(set(base.val) ^ set(head.val))
+        base.val.sort()
+        return base
+
+    def get_schema(self, walk, schema, meta, **kwargs):
+        schema.val.pop('maxItems', None)
+        schema.val.pop('uniqueItems', None)
+
+        return schema
+
+
+class AppendDistinct(Strategy):
+    def merge(self, walk, base, head, schema, meta, **kwargs):
+        if not walk.is_type(head, "array"):
+            raise HeadInstanceError("Head for an 'append' merge strategy is not an array")
+
+        if base.is_undef():
+            base = JSONValue([], base.ref)
+        else:
+            if not walk.is_type(base, "array"):
+                raise BaseInstanceError("Base for an 'append' merge strategy is not an array")
+
+            base = JSONValue(list(base.val), base.ref)
+
+        base.val = list(set(base.val + head.val))
+        base.val.sort()
+        return base
+
+    def get_schema(self, walk, schema, meta, **kwargs):
+        schema.val.pop('maxItems', None)
+        schema.val.pop('uniqueItems', None)
+
+        return schema
+
 
 class ArrayMergeById(Strategy):
     def merge(self, walk, base, head, schema, meta, idRef="id", ignoreId=None, **kwargs):

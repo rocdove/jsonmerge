@@ -196,6 +196,8 @@ class Merger(object):
         "overwrite": strategies.Overwrite(),
         "version": strategies.Version(),
         "append": strategies.Append(),
+        "appendXor": strategies.AppendXor(),
+        "appendDistinct": strategies.AppendDistinct(),
         "objectMerge": strategies.ObjectMerge(),
         "arrayMergeById": strategies.ArrayMergeById()
     }
